@@ -30,21 +30,19 @@ const CreateUser = useMutation(api.users.CreateUser)
       console.log(userInfo);
       const user = userInfo.data;
       //now i have saved to database
-      await CreateUser({
-        name:user?.name,
-        email:user?.email,
-        picture:user?.picture,
-        uid:uuid4()
-      })
+      const createdUser = await CreateUser({
+        name: user?.name,
+        email: user?.email,
+        picture: user?.picture,
+        uid: uuid4(),
+      });
 
-// now i will save in local storage so that when we refresh we can get it from local storage
-if(typeof window !== 'undefined'){
-  localStorage.setItem('user',JSON.stringify(user))
-}
+      // now i will save in local storage so that when we refresh we can get it from local storage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user", JSON.stringify(createdUser));
+      }
 
-
-
-      setUserDetail(userInfo?.data);
+      setUserDetail(createdUser);
       //have to save the user info in the database so that reload the page will not lose the user info
       closeDialog(false);
     },

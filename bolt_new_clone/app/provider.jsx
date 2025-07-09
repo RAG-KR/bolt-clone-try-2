@@ -17,12 +17,19 @@ const provider = ({ children }) => {
     IsAuthenticated();
   }, []);
 
-  const IsAuthenticated = async() => {
+  const IsAuthenticated = async () => {
     if (typeof window !== "undefined") {
       const user = JSON.parse(localStorage.getItem("user"));
-      //fetch form database
-      const result = await convex.query(api.users.GetUser , {email:user?.email})
-      console.log(result);
+      if (user) {
+        //fetch form database
+        const result = await convex.query(api.users.GetUser, {
+          email: user?.email,
+        });
+        if (result && result.length > 0) {
+          setUserDetail(result[0]);
+          console.log(result);
+        }
+      }
     }
   };
 
