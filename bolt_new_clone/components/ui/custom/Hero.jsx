@@ -2,7 +2,7 @@
 import Lookup from "@/data/Lookup";
 import React, { useContext, useState } from "react";
 import { ArrowRight, Link } from "lucide-react";
-import Colors from "@/data/colors";
+import Colors from "@/data/Colors";
 import { MessagesContext } from "@/context/MessagesContext";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import SignInDialog from "./SignInDialog";

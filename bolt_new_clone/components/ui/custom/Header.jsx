@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import  Colors  from '@/data/colors'
+import  Colors  from '@/data/Colors'
 import { UserDetailContext } from '@/context/UserDetailContext';
 import { useContext } from 'react';
 
