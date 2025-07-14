@@ -7,6 +7,8 @@ import { MessagesContext } from "@/context/MessagesContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import AppSideBar from "@/components/ui/custom/AppSideBar";
 
 const provider = ({ children }) => {
   const [messages, setMessages] = useState();
@@ -47,7 +49,10 @@ const provider = ({ children }) => {
               disableTransitionOnChange
             >
               <Header />
-              {children}
+              <SidebarProvider defaultOpen={false}>
+                <AppSideBar />
+                {children}
+              </SidebarProvider>
             </NextThemesProvider>
           </MessagesContext.Provider>
         </UserDetailContext.Provider>
