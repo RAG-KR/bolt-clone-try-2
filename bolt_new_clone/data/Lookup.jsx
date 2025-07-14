@@ -25,9 +25,29 @@ export default {
   </body>
 </html>`
     },
-    '/App.css': {
-      code: `
-            @tailwind base;
+    '/src/index.js': {
+      code: `import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
+
+const root = createRoot(document.getElementById('root'));
+root.render(<App />);`
+    },
+    '/src/App.js': {
+      code: `import React from 'react';
+import './App.css';
+
+export default function App() {
+  return (
+    <div className="p-4 bg-gray-100 text-center">
+      <h1 className="text-2xl font-bold text-blue-500">Hello, Tailwind CSS with Sandpack!</h1>
+      <p className="mt-2 text-gray-700">This is a live code editor.</p>
+    </div>
+  );
+}`
+    },
+    '/src/App.css': {
+      code: `@tailwind base;
 @tailwind components;
 @tailwind utilities;`
     },
@@ -57,7 +77,8 @@ export default config;
     }
   },
   DEPENDANCY: {
-
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     autoprefixer: "^10.0.0",

@@ -11,12 +11,35 @@ import {
 import { MessagesContext } from "@/context/MessagesContext";
 import Prompt from "@/data/Prompt";
 import axios from "axios";
-
+import { api } from "@/convex/_generated/api";
+import { useMutation, useConvex } from "convex/react";
+import { useParams } from "next/navigation";
+import { Loader2Icon } from "lucide-react";
 
 function CodeView() {
+  const {id} = useParams()
   const [activeTab, setActiveTab] = useState("code");
   const [files, setFiles] = useState(Lookup?.DEFAULT_FILE)
   const {messages, setMessages} = useContext(MessagesContext)
+  const UpdateFiles = useMutation(api.workspace.UpdateFiles)
+  const convex = useConvex()
+  const [loading, setLoading] = useState(false)
+
+  useEffect(()=>{
+    id&&GetFiles()
+  },[id])
+
+   const GetFiles = async ()=>{
+    setLoading(true)
+    const result = await convex.query(api.workspace.GetWorkspace,{
+      workspaceId:id
+    })
+    if(result?.fileData){
+      const mergedFiles = {...Lookup.DEFAULT_FILE, ...result?.fileData}
+      setFiles(mergedFiles)
+    }
+    setLoading(false)
+   }
 
   useEffect(() => {
     if (messages && messages.length > 0) {
@@ -28,6 +51,7 @@ function CodeView() {
   }, [messages]);
 
   const GenerateAiCode = async ()=>{
+    setLoading(true)
     try {
       const PROMPT = JSON.stringify(messages)+' '+Prompt.CODE_GEN_PROMPT
       const result = await axios.post('/api/gen-ai-code', {
@@ -36,16 +60,22 @@ function CodeView() {
       console.log(result.data)
       const aiResp = result.data
       if (aiResp && aiResp.files) {
-        const mergedFiles = {...Lookup.DEFAULT_FILE, ...aiResp.files}
+        const mergedFiles = {...Lookup.DEFAULT_FILE, ...aiResp?.files}
         setFiles(mergedFiles)
+        await UpdateFiles({
+          workspaceId:id,
+          files:aiResp?.files
+        })
       }
     } catch (error) {
       console.error('Error generating AI code:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div>
+    <div className="relative">
       <div className="bg-[#181818] w-full p-2 border">
         <div className="flex items-center flex-wrap shrink-0 p-1 bg-black w-[140px] gap-3 justify-center rounded-full">
           <h2
@@ -62,13 +92,14 @@ function CodeView() {
           </h2>
         </div>
       </div>
-      <SandpackProvider template="react" theme="dark"
+      <SandpackProvider theme="dark"
       files={files}
       customSetup={
         {
           dependencies:{
             ...Lookup.DEPENDANCY,
-          }
+          },
+          entry: "/src/index.js"
         }
       }
       options={{
@@ -87,6 +118,12 @@ function CodeView() {
           }
         </SandpackLayout>
       </SandpackProvider>
+             {loading && (
+         <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-gray-900/50 rounded-lg">  
+           <Loader2Icon className="animate-spin h-10 w-10 text-white mb-3"/>
+           <h2 className="text-white text-lg">Generating your files...</h2>
+         </div>
+       )}
     </div>
   );
 }

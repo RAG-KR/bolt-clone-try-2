@@ -33,7 +33,7 @@ function ChatView() {
     const result = await convex.query(api.workspace.GetWorkspace, {
       workspaceId: id,
     });
-    setMessages(result?.messages);
+    setMessages(Array.isArray(result?.messages) ? result?.messages : []);
     console.log(result);
     return result;
   };
