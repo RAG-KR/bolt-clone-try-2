@@ -66,13 +66,13 @@ const Hero = () => {
           <Link className="w-5 h-5" />
         </div>
       </div>
-      <div className=" mt-8 flex flex-wrap gap-2 max-w-2xl items-center justify-center gap-3">
+      <div className="mt-8 flex flex-wrap gap-2 max-w-2xl items-center justify-center">
         {Lookup.SUGGSTIONS.map((suggestion, index) => {
           return (
             <h2
               onClick={() => onGenerate(suggestion)}
               key={index}
-              className="p1 px-2 border rounded-full cursor-pointer text-sm text-gray-400 hover:text-white hover:bg-blue-500"
+              className="p-1 px-2 border rounded-full cursor-pointer text-sm text-gray-400 hover:text-white hover:bg-blue-500"
             >
               {suggestion}
             </h2>

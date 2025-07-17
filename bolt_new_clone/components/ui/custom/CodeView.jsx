@@ -15,6 +15,8 @@ import { api } from "@/convex/_generated/api";
 import { useMutation, useConvex } from "convex/react";
 import { useParams } from "next/navigation";
 import { Loader2Icon } from "lucide-react";
+import { countTokens } from "./ChatView";
+import { UserDetailContext } from "@/context/UserDetailContext";
 
 function CodeView() {
   const {id} = useParams()
@@ -24,6 +26,8 @@ function CodeView() {
   const UpdateFiles = useMutation(api.workspace.UpdateFiles)
   const convex = useConvex()
   const [loading, setLoading] = useState(false)
+  const UpdateToken = useMutation(api.users.UpdateToken);
+  const {userDetail, setUserDetail} = useContext(UserDetailContext)
 
   useEffect(()=>{
     id&&GetFiles()
@@ -66,6 +70,12 @@ function CodeView() {
           workspaceId:id,
           files:aiResp?.files
         })
+        const token = Number(userDetail?.token) - Number(countTokens(JSON.stringify(aiResp)))
+        //update the db for the number of tokens
+        await UpdateToken({
+          token:token,
+          userId:userDetail?._id,
+        });
       }
     } catch (error) {
       console.error('Error generating AI code:', error)
