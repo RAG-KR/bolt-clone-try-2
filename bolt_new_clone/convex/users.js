@@ -26,7 +26,7 @@ export const CreateUser = mutation({
       email: args.email,
       picture: args.picture,
       uid: args.uid,
-      token:50000     
+      token: 0  // Start at 0 for cumulative token counting
     });
     
     return await ctx.db.get(result);
@@ -48,14 +48,20 @@ export const GetUser = query({
   },
 });
 
+// 🛡️ IMPROVED: UpdateToken for cumulative usage tracking
 export const UpdateToken = mutation({
   args: {
-    token:v.number(),
-    userId:v.id('users'),
+    token: v.number(),
+    userId: v.id('users'),
   },
   handler: async (ctx, args) => {
+    // Basic validation to prevent NaN/invalid values
+    if (isNaN(args.token) || !isFinite(args.token)) {
+      throw new Error(`Invalid token value: ${args.token}`);
+    }
+    
     const result = await ctx.db.patch(args.userId, {
-      token:args.token,
+      token: args.token,
     });
     return result;
   },

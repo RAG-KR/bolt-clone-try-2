@@ -70,12 +70,34 @@ function CodeView() {
           workspaceId:id,
           files:aiResp?.files
         })
-        const token = Number(userDetail?.token) - Number(countTokens(JSON.stringify(aiResp)))
-        //update the db for the number of tokens
-        await UpdateToken({
-          token:token,
-          userId:userDetail?._id,
-        });
+        
+        // Calculate token usage (subtract from current balance)
+        const currentTokens = Number(userDetail?.token) || 0;
+        const tokenUsed = countTokens(JSON.stringify(aiResp));
+        const newToken = currentTokens - tokenUsed;
+
+        // Validate calculation
+        if (isNaN(newToken) || !isFinite(newToken)) {
+          console.error("❌ Invalid token calculation in CodeView, skipping update");
+          setLoading(false);
+          return;
+        }
+
+        try {
+          // Update database
+          await UpdateToken({
+            token: newToken,
+            userId: userDetail?._id,
+          });
+          
+          // Update local context
+          setUserDetail({...userDetail, token: newToken});
+          
+          // Log usage
+          console.log(`CodeView - Tokens used: ${tokenUsed}, Remaining: ${newToken}`);
+        } catch (error) {
+          console.error("❌ Failed to update tokens in CodeView:", error);
+        }
       }
     } catch (error) {
       console.error('Error generating AI code:', error)

@@ -13,7 +13,7 @@ import AppSideBar from "@/components/ui/custom/AppSideBar";
 const provider = ({ children }) => {
   const [messages, setMessages] = useState();
   const [userDetail, setUserDetail] = useState();
-  const convex = useConvex()
+  const convex = useConvex();
 
   useEffect(() => {
     IsAuthenticated();
@@ -29,7 +29,7 @@ const provider = ({ children }) => {
         });
         if (result && result.length > 0) {
           setUserDetail(result[0]);
-          console.log(result);
+          console.log(`User logged in: ${result[0].email}, Token balance: ${result[0].token}`);
         }
       }
     }
