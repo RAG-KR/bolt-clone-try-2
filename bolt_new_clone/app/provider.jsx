@@ -9,10 +9,12 @@ import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import AppSideBar from "@/components/ui/custom/AppSideBar";
+import { ActionContext } from "@/context/ActionContext";
 
 const provider = ({ children }) => {
   const [messages, setMessages] = useState();
   const [userDetail, setUserDetail] = useState();
+  const [action , setAction] = useState(); 
   const convex = useConvex();
 
   useEffect(() => {
@@ -42,6 +44,7 @@ const provider = ({ children }) => {
       >
         <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
           <MessagesContext.Provider value={{ messages, setMessages }}>
+            <ActionContext.Provider value={{action , setAction}}> 
             <NextThemesProvider
               attribute="class"
               defaultTheme="dark"
@@ -56,6 +59,7 @@ const provider = ({ children }) => {
                 </SidebarInset>
               </SidebarProvider>
             </NextThemesProvider>
+            </ActionContext.Provider>
           </MessagesContext.Provider>
         </UserDetailContext.Provider>
       </GoogleOAuthProvider>

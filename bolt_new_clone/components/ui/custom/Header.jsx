@@ -4,9 +4,17 @@ import { Button } from '@/components/ui/button'
 import  Colors  from '@/data/Colors'
 import { UserDetailContext } from '@/context/UserDetailContext';
 import { useContext } from 'react';
+import { ActionContext } from '@/context/ActionContext';
 
 const Header = () => {
   const {userDetail , setUserDetail} = useContext(UserDetailContext);
+  const {action , setAction} = useContext(ActionContext);
+
+  // tells the action name weathere it is deploy or share 
+const onActionBtn=(action)>{
+
+}
+
   return (
     <div>
         <div className = 'p-4 flex justify-between items-center'>
