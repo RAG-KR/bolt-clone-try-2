@@ -28,10 +28,16 @@ export default {
     '/src/index.js': {
       code: `import React from 'react';
 import { createRoot } from 'react-dom/client';
+import './index.css';
 import App from './App';
 
 const root = createRoot(document.getElementById('root'));
 root.render(<App />);`
+    },
+    '/src/index.css': {
+      code: `@tailwind base;
+@tailwind components;
+@tailwind utilities;`
     },
     '/src/App.js': {
       code: `import React from 'react';
