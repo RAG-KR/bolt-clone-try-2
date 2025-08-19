@@ -18,6 +18,7 @@ import { Loader2Icon, Download, Share2 } from "lucide-react";
 import { countTokens } from "./ChatView";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { Button } from "../button";
+import SandpackPreviewClient from "./SandpackPreviewClient";
 
 function CodeView() {
   const {id} = useParams()
@@ -176,7 +177,7 @@ function CodeView() {
           </>
           :
           <>
-            <SandpackPreview style={{height: "80vh",}} showNavigator={true}/>
+            <SandpackPreviewClient/>
           </>
           }
         </SandpackLayout>
