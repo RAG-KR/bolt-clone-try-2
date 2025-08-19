@@ -14,17 +14,19 @@ import axios from "axios";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useConvex } from "convex/react";
 import { useParams } from "next/navigation";
-import { Loader2Icon, Download, Share2 } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { countTokens } from "./ChatView";
 import { UserDetailContext } from "@/context/UserDetailContext";
-import { Button } from "../button";
+import { ActionContext } from "@/context/ActionContext";
 import SandpackPreviewClient from "./SandpackPreviewClient";
 
 function CodeView() {
   const {id} = useParams()
   const [activeTab, setActiveTab] = useState("code");
   const [files, setFiles] = useState(Lookup?.DEFAULT_FILE)
+  const [sandboxUrl, setSandboxUrl] = useState(null)
   const {messages, setMessages} = useContext(MessagesContext)
+  const {action, setAction} = useContext(ActionContext)
   const UpdateFiles = useMutation(api.workspace.UpdateFiles)
   const convex = useConvex()
   const [loading, setLoading] = useState(false)
@@ -34,6 +36,13 @@ function CodeView() {
   useEffect(()=>{
     id&&GetFiles()
   },[id])
+
+  // Handle action changes from Header
+  useEffect(() => {
+    // Actions are now handled directly in SandpackPreviewClient
+    // No need for duplicate handling here
+    setActiveTab('preview')
+  }, [action]);
 
    const GetFiles = async ()=>{
     setLoading(true)
@@ -109,9 +118,13 @@ function CodeView() {
   }
 
   const handleExport = () => {
-    // Open sandbox with workspace ID for export
-    const sandboxUrl = `https://codesandbox.io/s/new?file=/workspace-${id}.json`;
-    window.open(sandboxUrl, '_blank');
+    if (sandboxUrl) {
+      // Open the specific sandbox URL for this project
+      window.open(sandboxUrl, '_blank');
+    } else {
+      // Fallback to opening a new sandbox
+      window.open('https://codesandbox.io/s/new', '_blank');
+    }
   };
 
   const handleShare = () => {
@@ -119,27 +132,12 @@ function CodeView() {
     console.log('Share functionality to be implemented');
   };
 
+  const handleSandboxUrlReady = (url) => {
+    setSandboxUrl(url);
+  };
+
   return (
     <div className="relative">
-      {/* Share and Export Buttons */}
-      <div className="flex justify-end gap-2 mb-4">
-        <Button 
-          variant="outline" 
-          onClick={handleExport}
-          className="flex items-center gap-2"
-        >
-          <Download className="h-4 w-4" />
-          Export
-        </Button>
-        <Button 
-          onClick={handleShare}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-        >
-          <Share2 className="h-4 w-4" />
-          Share
-        </Button>
-      </div>
-
       <div className="bg-[#181818] w-full p-2 border">
         <div className="flex items-center flex-wrap shrink-0 p-1 bg-black w-[140px] gap-3 justify-center rounded-full">
           <h2
@@ -177,7 +175,7 @@ function CodeView() {
           </>
           :
           <>
-            <SandpackPreviewClient/>
+            <SandpackPreviewClient onSandboxUrlReady={handleSandboxUrlReady}/>
           </>
           }
         </SandpackLayout>

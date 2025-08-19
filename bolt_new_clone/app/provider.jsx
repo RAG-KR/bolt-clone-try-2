@@ -4,18 +4,20 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import Header from "@/components/ui/custom/Header";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { MessagesContext } from "@/context/MessagesContext";
+import { ActionContext } from "@/context/ActionContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import AppSideBar from "@/components/ui/custom/AppSideBar";
-import { ActionContext } from "@/context/ActionContext";
+import { useRouter } from "next/navigation";
 
 const provider = ({ children }) => {
   const [messages, setMessages] = useState();
   const [userDetail, setUserDetail] = useState();
-  const [action , setAction] = useState(); 
+  const [action, setAction] = useState(null);
   const convex = useConvex();
+  const router = useRouter();
 
   useEffect(() => {
     IsAuthenticated();
@@ -24,6 +26,10 @@ const provider = ({ children }) => {
   const IsAuthenticated = async () => {
     if (typeof window !== "undefined") {
       const user = JSON.parse(localStorage.getItem("user"));
+      if(!user){
+        router.push('/')
+        return;
+      }
       if (user) {
         //fetch form database
         const result = await convex.query(api.users.GetUser, {
@@ -44,21 +50,21 @@ const provider = ({ children }) => {
       >
         <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
           <MessagesContext.Provider value={{ messages, setMessages }}>
-            <ActionContext.Provider value={{action , setAction}}> 
-            <NextThemesProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <Header />
-              <SidebarProvider defaultOpen={false}>
-                <AppSideBar />
-                <SidebarInset>
-                  {children}
-                </SidebarInset>
-              </SidebarProvider>
-            </NextThemesProvider>
+            <ActionContext.Provider value={{ action, setAction }}>
+              <NextThemesProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <Header />
+                <SidebarProvider defaultOpen={false}>
+                  <AppSideBar />
+                  <SidebarInset>
+                    {children}
+                  </SidebarInset>
+                </SidebarProvider>
+              </NextThemesProvider>
             </ActionContext.Provider>
           </MessagesContext.Provider>
         </UserDetailContext.Provider>
