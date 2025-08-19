@@ -14,9 +14,10 @@ import axios from "axios";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useConvex } from "convex/react";
 import { useParams } from "next/navigation";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, Download, Share2 } from "lucide-react";
 import { countTokens } from "./ChatView";
 import { UserDetailContext } from "@/context/UserDetailContext";
+import { Button } from "../button";
 
 function CodeView() {
   const {id} = useParams()
@@ -106,8 +107,38 @@ function CodeView() {
     }
   }
 
+  const handleExport = () => {
+    // Open sandbox with workspace ID for export
+    const sandboxUrl = `https://codesandbox.io/s/new?file=/workspace-${id}.json`;
+    window.open(sandboxUrl, '_blank');
+  };
+
+  const handleShare = () => {
+    // Share functionality - placeholder for now
+    console.log('Share functionality to be implemented');
+  };
+
   return (
     <div className="relative">
+      {/* Share and Export Buttons */}
+      <div className="flex justify-end gap-2 mb-4">
+        <Button 
+          variant="outline" 
+          onClick={handleExport}
+          className="flex items-center gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export
+        </Button>
+        <Button 
+          onClick={handleShare}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+        >
+          <Share2 className="h-4 w-4" />
+          Share
+        </Button>
+      </div>
+
       <div className="bg-[#181818] w-full p-2 border">
         <div className="flex items-center flex-wrap shrink-0 p-1 bg-black w-[140px] gap-3 justify-center rounded-full">
           <h2

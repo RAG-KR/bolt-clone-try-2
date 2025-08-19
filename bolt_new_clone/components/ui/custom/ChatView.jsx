@@ -54,7 +54,7 @@ function ChatView() {
     if (messages && messages.length > 0) {
       const role = messages[messages?.length - 1].role;
       if (role === "user") {
-        GetAIResponse();
+        // GetAIResponse();
       }
     }
   }, [messages]);
